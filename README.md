@@ -1,5 +1,13 @@
 # rpg-logger
 
+# Log
+
+You can call logger with this syntax.
+```
+message max length 32767
+log('debug', message);
+```
+
 # Log level
 
 You can set log level defining an environment variable (`WRKENVVAR`) `RPG_LOG_LEVEL` with this values :
@@ -7,7 +15,7 @@ You can set log level defining an environment variable (`WRKENVVAR`) `RPG_LOG_LE
 * **debug** for development CPF9897
 * **info** (default) general informations CPF9897
 * **warn** warning message CPF9897
-* **error** error message CPF9898
+* **error** error message CPF9897
 * **fatal** fatal error message CPF9898
 
 CPF9898 will exit program.
