@@ -11,7 +11,9 @@ log('debug':message);
 message = 'This log should appear with CPF9897';
 log('info':message);
 
-message = 'This log should appear with CPF9898';
-log('fatal':message);
+MONITOR;
+  message = 'This log should appear with CPF9898';
+  log('fatal':message);
+ENDMON;
 
 RETURN;
