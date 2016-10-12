@@ -14,6 +14,8 @@ log('info':message);
 MONITOR;
   message = 'This log should appear with CPF9898';
   log('fatal':message);
+ON-ERROR;
+  DSPLY 'error';
 ENDMON;
 
 RETURN;

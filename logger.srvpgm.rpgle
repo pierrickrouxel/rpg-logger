@@ -36,36 +36,35 @@ DCL-PR sendProgramMessage EXTPGM('QMHSNDPM');
   errorCode LIKEDS(errorCode);
 END-PR;
 
-DCL-DS stack QUALIFIED;
+DCL-DS stack LEN(2000) QUALIFIED;
   bytesReturned INT(10);
   bytesAvailable INT(10);
-  entries INT(10);
+  threadEntryCount INT(10);
   offset INT(10);
-  entryCount INT(10);
+  returnedEntryCount INT(10);
 END-DS;
 
-DCL-DS jodInfo QUALIFIED;
-  name CHAR(10);
-  user CHAR(10);
-  number CHAR(6);
-  internalId CHAR(16);
-  reserved CHAR(2);
-  threadIndicator INT(10);
-  threadId CHAR(8);
+DCL-DS jobInfo QUALIFIED;
+  name CHAR(10) INZ('*');
+  user CHAR(10) INZ(*BLANK);
+  number CHAR(6) INZ(*BLANK);
+  internalId CHAR(16) INZ(*BLANK);
+  reserved CHAR(2) INZ(*LOVAL);
+  // 1 = current thread
+  threadIndicator INT(10) INZ(1);
+  threadId CHAR(8) INZ(*LOVAL);
 END-DS;
 
 DCL-DS entry QUALIFIED;
   length INT(10);
-  level INT(10) POS(21);
   programName CHAR(10) POS(25);
-  programLibrary CHAR(10) POS(35);
 END-DS;
 
 DCL-PR getStack EXTPGM('QWVRCSTK');
-  receiver LIKEDS(stack);
-  receiverLength INT(10);
-  receiverFormat CHAR(8) CONST;
-  jobInfo LIKEDS(jobInfo);
+  stack LIKEDS(stack);
+  stackLength INT(10) CONST;
+  stackFormat CHAR(8) CONST;
+  jobInfo LIKEDS(jobInfo) CONST;
   jobInfoFormat CHAR(8) CONST;
   errorCode LIKEDS(errorCode);
 END-PR;
@@ -99,6 +98,7 @@ DCL-PROC getInternalLogLevel;
   DCL-S variable CHAR(25);
   DCL-S logLevel POINTER;
   DCL-S caller CHAR(10);
+  DCL-S i INT(10);
 
   // Find caller program name
   getStack(stack:
@@ -107,7 +107,7 @@ DCL-PROC getInternalLogLevel;
            jobInfo:
            'JIDF0100':
            errorCode);
-  FOR i = 1 TO stack.entryCount;
+  FOR i = 1 TO stack.returnedEntryCount;
     entry = %SUBST(stack:stack.offset + 1);
     IF programName <> entry.programName;
       caller = entry.programName;
