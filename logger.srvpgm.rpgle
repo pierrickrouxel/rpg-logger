@@ -15,7 +15,7 @@ DCL-PR getInternalLogLevel CHAR(10) END-PR;
 // 4 = error
 // 5 = fatal
 DCL-PR numberizeLevel INT(5);
-  logLevel CHAR(10) CONST;
+  level CHAR(10) CONST;
 END-PR;
 
 DCL-DS errorCode QUALIFIED;
@@ -71,17 +71,17 @@ END-PR;
 
 DCL-PROC numberizeLevel;
   DCL-PI *N INT(5);
-    logLevel CHAR(10) CONST;
+    level CHAR(10) CONST;
   END-PI;
 
   SELECT;
-  WHEN logLevel = 'info';
+  WHEN level = 'info';
     RETURN 2;
-  WHEN logLevel = 'warn';
+  WHEN level = 'warn';
     RETURN 3;
-  WHEN logLevel = 'error';
+  WHEN level = 'error';
     RETURN 4;
-  WHEN logLevel = 'fatal';
+  WHEN level = 'fatal';
     RETURN 5;
   OTHER;
     RETURN 1;
@@ -96,7 +96,7 @@ DCL-PROC getInternalLogLevel;
   END-PR;
 
   DCL-S variable CHAR(25);
-  DCL-S logLevel POINTER;
+  DCL-S level POINTER;
   DCL-S caller CHAR(10);
   DCL-S i INT(10);
 
@@ -115,20 +115,20 @@ DCL-PROC getInternalLogLevel;
     ENDIF;
     stack.offset = stack.offset + entry.length;
   ENDFOR;
-  
+
   // Find program log level
   variable = 'RPG_LOG_LEVEL_' + caller;
 
-  logLevel = getEnv(%TRIM(variable));
-  IF logLevel <> *NULL;
-    RETURN %STR(logLevel:%SIZE(logLevel));
+  level = getEnv(%TRIM(variable));
+  IF level <> *NULL;
+    RETURN %STR(level:%SIZE(level));
   ENDIF;
 
   // Find global log level
   variable = 'RPG_LOG_LEVEL';
-  logLevel = getEnv(%TRIM(variable));
-  IF logLevel <> *NULL;
-    RETURN %STR(logLevel:%SIZE(logLevel));
+  level = getEnv(%TRIM(variable));
+  IF level <> *NULL;
+    RETURN %STR(level:%SIZE(level));
   ENDIF;
 
   RETURN 'info';
@@ -136,7 +136,7 @@ END-PROC;
 
 DCL-PROC log EXPORT;
   DCL-PI *N;
-    logLevel CHAR(10);
+    level CHAR(10);
     message CHAR(32767);
   END-PI;
 
@@ -144,7 +144,7 @@ DCL-PROC log EXPORT;
   DCL-S numericLogLevel INT(5);
   DCL-S internalNumericLogLevel INT(5);
 
-  numericLogLevel = numberizeLevel(logLevel);
+  numericLogLevel = numberizeLevel(level);
   internalNumericLogLevel = numberizeLevel(getInternalLogLevel());
 
   // Do nothing if log is lower than log level

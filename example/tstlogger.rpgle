@@ -3,17 +3,12 @@ CTL-OPT BNDDIR('LOGGER');
 
 /copy logger.h.rpgle
 
-DCL-S message CHAR(100);
+log('debug':'This log should not appear');
 
-message = 'This log should not appear';
-log('debug':message);
-
-message = 'This log should appear with CPF9897';
-log('info':message);
+log('info':'This log should appear with CPF9897');
 
 MONITOR;
-  message = 'This log should appear with CPF9898';
-  log('fatal':message);
+  log('fatal':'This log should appear with CPF9898');
 ON-ERROR;
 ENDMON;
 
